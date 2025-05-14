@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>E-commerce Website</title>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+        <script src="https://unpkg.com/@tailwindcss/browser@latest"></script>
+        <style>
+            /* Custom styles for toast messages */
+            .toast {
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                background-color: #4caf50;
+                color: white;
+                padding: 10px 20px;
+                border-radius: 5px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+                font-size: 1rem;
+                z-index: 1000;
+                opacity: 1;
+                transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+            }
+    
+            .toast-warning {
+                background-color: #f39c12;
+            }
+    
+            .toast-info {
+                background-color: #3498db;
+            }
+    
+            .toast-success {
+                background-color: #2ecc71;
+            }
+    
+            .toast.fade-out {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+    
+            /* Style for quantity buttons */
+            .quantity-button {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 2.25rem; /* 36px */
+                height: 2.25rem; /* 36px */
+                border-radius: 9999px; /* rounded-full */
+                border: 2px solid #e5e7eb; /* border-gray-200 */
+                cursor: pointer;
+                user-select: none;
+                transition: background-color 0.3s ease; /* Smooth transition */
+            }
+    
+            .quantity-button:hover {
+                background-color: #f9fafb; /* hover:bg-gray-50 */
+            }
+    
+            .quantity-button:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+                background-color: transparent; /* Ensure no background on disabled */
+                border-color: #d1d5db; /* Keep border color for disabled state */
+            }
+    
+            .quantity-input {
+                width: 4rem; /* 64px */
+                padding-top: 0.5rem; /* pt-2 */
+                padding-bottom: 0.5rem; /* pb-2 */
+                padding-left: 0.75rem; /* pl-3 */
+                padding-right: 0.75rem; /* pr-3 */
+                text-align: center;
+                border-radius: 0.375rem; /* rounded-md */
+                border: 1px solid #d1d5db; /* border-gray-300 */
+                font-size: 1rem; /* text-base */
+                -webkit-appearance: none; /* Remove default number input arrows */
+                -moz-appearance: textfield; /* Firefox */
+                appearance: textfield; /* Standard */
+            }
+    
+            .quantity-input:focus {
+                outline: none;
+                border-color: #3b82f6; /* focus:border-blue-500 */
+                box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15); /* focus:ring-blue-100 */
+            }
+    
+            /* Hide arrows for number input in Chrome, Safari, Edge */
+            .quantity-input::-webkit-outer-spin-button,
+            .quantity-input::-webkit-inner-spin-button {
+                -webkit-appearance: none;
+                margin: 0;
+            }
+    
+            /* Hide arrows for number input in Firefox */
+            .quantity-input[type=number] {
+                -moz-appearance: textfield;
+            }
+    
+            /* Added for header and cart icon */
+            .header {
+                display: flex;
+                justify-content: space-between; /* push elements to the edges */
+                align-items: center; /* Vertically center items */
+                padding: 1rem 2rem; /* Add some padding */
+                background-color: #f8f0fb; /* Light background color */
+            }
+    
+            .header h1 {
+                color: #e91e63; /* Pink color for the title */
+                font-weight: 600;  /* Make the title bold */
+            }
+    
+            #cart-link {
+                display: flex;
+                align-items: center;
+                color: #e91e63;
+                text-decoration: none;
+                font-weight: 500;
+                transition: color 0.3s ease; /* Smooth transition */
+            }
+    
+            #cart-link:hover {
+                color: #c2185b; /* Darker pink on hover */
+            }
+    
+            #cart-icon {
+                width: 24px; /* Adjust as needed */
+                height: 24px;
+                margin-right: 0.5rem; /* Add some space between icon and text */
+                 /* Use a background image, or an SVG */
+                background-image: url('cart-icon.svg'); /* Replace with your cart icon path */
+                background-size: cover;
+            }
+           .top-banner {
+                text-align: center;
+                padding: 0.5rem;
+                background-color: #fce4ec;
+                color: #e91e63;
+                font-size: 0.9rem;
+            }
+            .add-to-cart-button {
+                background-color: #f06292; /* A shade of pink */
+                color: white;
+                font-semibold: py-2 px-4 rounded-lg transition duration-300 ease-in-out;
+            }
+    
+            .add-to-cart-button:hover {
+                background-color: #e53973; /* A darker shade of pink */
+            }
+            #checkout-button {
+                background-color: #f06292; /* A shade of pink */
+                color: white;
+                font-semibold: py-2.5 px-5 rounded-lg transition duration-300 ease-in-out;
+            }
+    
+            #checkout-button:hover {
+                background-color: #e53973; /* A darker shade of pink */
+            }
+    
+        </style>
+    </head>
+    <body class="bg-gray-100">
+        <div class="top-banner">
+            <p>Discover the latest styles and trends!</p>
+        </div>
+        <header class="header">
+            <h1><strong>Aesthetic Women Store</strong></h1>
+            <a href="#cart" id="cart-link">
+                <span id="cart-icon"></span>
+                View Cart
+            </a>
+        </header>
+    
+        <main class="container mx-auto py-6 px-4">
+            <section id="product-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-8">
+            </section>
+    
+            <section id="cart" class="bg-white rounded-lg shadow-md p-6 mb-8">
+                <h2 class="text-2xl font-semibold mb-4 text-gray-800">Your Cart</h2>
+                <ul id="cart-items" class="mb-4">
+                </ul>
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-lg font-semibold text-gray-700">Total:</span>
+                    <p id="cart-total" class="text-xl font-bold text-blue-500">0.00</p>
+                </div>
+                <div class="flex justify-end">
+                    <button id="checkout-button" class="checkout-button">
+                        Checkout
+                    </button>
+                </div>
+                 <div id="no-items-message" class="text-center text-gray-500 py-4" style="display: none;">
+                    Your cart is empty.
+                </div>
+            </section>
+        </main>
+    
+        <footer class="bg-gray-800 text-white py-4 mt-8">
+            <div class="container mx-auto px-4 text-center">
+                <p>&copy; 2025 Aesthetic Women Store. All rights reserved.</p>
+            </div>
+        </footer>
+    
+        <script>
+            // Mock product data (replace with actual data loading if needed)
+            const products = [
+                { id: 1, name: 'Hijab', price: 750, imageUrl: 'Product 1.jpeg', description: 'Elegant Hijab' },
+                { id: 2, name: 'Abaya', price: 2500, imageUrl: 'Product 2.jpeg', description: 'Stylish Abaya' },
+                { id: 3, name: 'Lavender Shoe', price: 1200, imageUrl: 'Product 3.jpeg', description: 'Comfortable Lavender Shoe' },
+                { id: 4, name: 'Stylish Shoe', price: 1500, imageUrl: 'Product 4.jpeg', description: 'Stylish Shoe for every occasion' },
+                { id: 5, name: 'Quartz Watch', price: 2000, imageUrl: 'Product 5.jpeg', description: 'Classic Quartz Watch' },
+                { id: 6, name: 'Niqab', price: 800, imageUrl: 'Product 6.jpeg', description: 'Beautiful Niqab' },
+                { id: 7, name: 'Smartrock Watch', price: 560, imageUrl: 'Accesories.jpeg', description: 'Elegant Women Watch' },
+                { id: 8, name: 'DouDou Heart Necklace', price: 62, imageUrl: 'Accesories.jpeg', description: 'Delicate Heart Pendant Necklace' },
+                { id: 9, name: 'Lihao Ring Set', price: 15, imageUrl: 'Accesories.jpeg', description: 'Stylish Ring Set' },
+                { id: 10, name: 'Chiffon Hijabs', price: 500, imageUrl: 'Chiffon Hijabs.jpeg', description: 'Soft Elegant Hijabs' },
+                { id: 11, name: 'Elegant Floral Choker Necklace', price: 300, imageUrl: 'Choker Necklaces.jpeg', description: 'Beautiful Floral Choker' },
+                 { id: 12, name: 'Pearl Crystal Hairpins', price: 250, imageUrl: 'Pearl Crystal Hairpins.jpeg', description: ' সেট of Pearl Hairpins' },
+                { id: 13, name: 'Brown Juthi', price: 1800, imageUrl: 'Juthi Brownie.jpeg', description: 'Brown Traditional Shoes' },
+                { id: 14, name: 'Wedding Ring', price: 1000, imageUrl: 'Wedding ring.jpeg', description: 'Elegant Wedding Ring' },
+                { id: 15, name: 'Red Leafy Choker', price: 450, imageUrl: 'Red Leafy choaker.jpeg', description: 'Delicate Red Leafy Vine Choker Necklace' },
+                { id: 16, name: 'Silver Bracelet', price: 650, imageUrl: 'Silver Braclet.jpeg', description: 'Elegant Silver Bracelet' },
+            ];
+    
+            // Cart-related functions
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    
+            function saveCart() {
+                localStorage.setItem('cart', JSON.stringify(cart));
+            }
+    
+            function findProduct(productId) {
+                return products.find(product => product.id === productId);
+            }
+    
+            function getCartItem(productId) {
+                return cart.find((item) => item.productId === productId);
+            }
+    
+            function addItemToCart(productId, quantity = 1) {
+                const existingItem = getCartItem(productId);
+    
+                if (existingItem) {
+                    existingItem.quantity += quantity;
+                } else {
+                    cart.push({ productId, quantity });
+                }
+                saveCart();
+                showToast('Product added to cart!', 'success');
+            }
+    
+            function updateCartItemQuantity(productId, newQuantity) {
+                const item = getCartItem(productId);
+    
+                if (item) {
+                    item.quantity = newQuantity;
+                    if (item.quantity <= 0) {
+                        removeItemFromCart(productId);
+                    } else {
+                        saveCart();
+                    }
+                }
+            }
+    
+            function removeItemFromCart(productId) {
+                cart = cart.filter(item => item.productId !== productId);
+                saveCart();
+                showToast('Product removed from cart!', 'warning');
+            }
+    
+            function getTotalPrice() {
+                let total = 0;
+                cart.forEach(item => {
+                    const product = findProduct(item.productId);
+                    if (product) {
+                        total += product.price * item.quantity;
+                    }
+                });
+                return total.toFixed(2);
+            }
+    
+            function clearCart() {
+                cart = [];
+                saveCart();
+                showToast('Cart cleared!', 'info');
+            }
+    
+            // UI rendering functions
+            function renderProductList() {
+                const productListElement = document.getElementById('product-list');
+                productListElement.innerHTML = ''; // Clear existing content
+    
+                products.forEach(product => {
+                    const productCard = document.createElement('div');
+                    productCard.classList.add('bg-white', 'rounded-lg', 'shadow-md', 'p-4', 'flex', 'flex-col', 'transition-transform', 'hover:shadow-lg', 'product-card');
+    
+                    productCard.innerHTML = `
+                        <img src="${product.imageUrl}" alt="${product.name}" class="w-full h-40 object-cover rounded-md mb-4">
+                        <h2 class="text-xl font-semibold text-gray-800 mb-2 product-name">${product.name}</h2>
+                        <p class="text-gray-600 mb-2 product-description">${product.description}</p>
+                        <p class="text-lg font-bold text-blue-500 mb-4 product-price">₹${product.price.toFixed(2)}</p>
+                        <button class="add-to-cart-button" data-product-id="${product.id}">
+                            Add to Cart
+                        </button>
+                    `;
+    
+                    productListElement.appendChild(productCard);
+                });
+    
+                // Attach event listeners to the "Add to Cart" buttons
+                const addToCartButtons = document.querySelectorAll('.add-to-cart-button');
+                addToCartButtons.forEach(button => {
+                    button.addEventListener('click', () => {
+                        const productId = parseInt(button.dataset.productId);
+                        addItemToCart(productId);
+                        renderCart(); // Update the cart display after adding
+                    });
+                });
+            }
+    
+            function renderCart() {
+                const cartItemsElement = document.getElementById("cart-items");
+                const cartTotalElement = document.getElementById("cart-total");
+                const noItemsMessage = document.getElementById("no-items-message");
+                cartItemsElement.innerHTML = ""; // Clear existing cart items
+                let total = 0;
+    
+                if (cart.length === 0) {
+                    noItemsMessage.style.display = "block";
+                    cartTotalElement.textContent = "0.00";
+                    document.getElementById('checkout-button').disabled = true;
+                    document.getElementById('checkout-button').classList.add('opacity-50', 'cursor-not-allowed');
+                } else {
+                    noItemsMessage.style.display = "none";
+                    document.getElementById('checkout-button').disabled = false;
+                    document.getElementById('checkout-button').classList.remove('opacity-50', 'cursor-not-allowed');
+    
+    
+                    cart.forEach((item) => {
+                        const product = findProduct(item.productId);
+                        if (product) {
+                            const cartItemElement = document.createElement("li");
+                            cartItemElement.classList.add("flex", "justify-between", "items-center", "py-2", "border-b", "border-gray-200");
+    
+                            const quantityContainer = document.createElement('div');
+                            quantityContainer.classList.add('flex', 'items-center', 'space-x-4');
+    
+                            const decreaseButton = document.createElement('button');
+                            decreaseButton.classList.add('quantity-button');
+                            decreaseButton.textContent = '-';
+                            decreaseButton.addEventListener('click', () => {
+                                let currentQuantity = getCartItem(item.productId).quantity;
+                                if(currentQuantity > 1){
+                                     updateCartItemQuantity(item.productId, currentQuantity - 1);
+                                     renderCart();
+                                 }
+                                 else{
+                                     removeItemFromCart(item.productId);
+                                     renderCart();
+                                 }
+    
+                            });
+    
+                            const quantityInput = document.createElement('input');
+                            quantityInput.type = 'number';
+                            quantityInput.value = item.quantity;
+                            quantityInput.classList.add('quantity-input');
+                            quantityInput.setAttribute('min', '1');
+                            quantityInput.addEventListener('change', (event) => {
+                                const newQuantity = parseInt(event.target.value);
+                                updateCartItemQuantity(item.productId, newQuantity);
+                                renderCart();
+                            });
+    
+                            const increaseButton = document.createElement('button');
+                            increaseButton.classList.add('quantity-button');
+                            increaseButton.textContent = '+';
+                            increaseButton.addEventListener('click', () => {
+                                let currentQuantity = getCartItem(item.productId).quantity;
+                                updateCartItemQuantity(item.productId, currentQuantity + 1);
+                                renderCart();
+                            });
+    
+                            // Get product details for cart display
+                            const productDetails = findProduct(item.productId);
+    
+                            cartItemElement.innerHTML = `
+                                <div class="flex items-center space-x-4">
+                                    <img src="${productDetails.imageUrl}" alt="${productDetails.name}" class="w-16 h-16 object-cover rounded-md">
+                                    <div>
+                                        <h3 class="text-lg font-semibold text-gray-800">${productDetails.name}</h3>
+                                        <p class="text-gray-500">Price: ₹${productDetails.price.toFixed(2)}</p>
+                                    </div>
+                                </div>
+                                <div class = "flex items-center space-x-4">
+                                    <span class="text-lg font-semibold text-gray-700">Quantity:</span>
+                                    </div>
+                                <span class="text-xl font-bold text-gray-900">₹${(productDetails.price * item.quantity).toFixed(2)}</span>
+                                <button class="text-red-500 hover:text-red-700 transition duration-300 ease-in-out" onclick="removeItemFromCart(${item.productId})">
+                                    Remove
+                                </button>
+                            `;
+    
+                            quantityContainer.insertBefore(decreaseButton, quantityInput);
+                            quantityContainer.appendChild(increaseButton);
+                            cartItemElement.querySelector('.flex.items-center.space-x-4:last-child').appendChild(quantityContainer); // Append after 'Quantity' span
+    
+                            cartItemsElement.appendChild(cartItemElement);
+                            total += product.price * item.quantity;
+                        }
+                    });
+                    cartTotalElement.textContent = total.toFixed(2);
+                }
+            }
+    
+            function showToast(message, type = 'success') {
+                const toast = document.createElement('div');
+                toast.className = `toast toast-${type}`;
+                toast.textContent = message;
+                document.body.appendChild(toast);
+    
+                setTimeout(() => {
+                    toast.classList.add('fade-out');
+                    setTimeout(() => toast.remove(), 500); // Remove after fade out
+                }, 2000); // 2 seconds
+            }
+    
+            // Event listener for the checkout button
+            document.getElementById('checkout-button').addEventListener('click', () => {
+                if (cart.length > 0) {
+                    // In a real application, you would send the cart data to a server
+                    // for processing (e.g., creating an order, handling payment).
+                    // For this example, we'll just clear the cart.
+                    clearCart();
+                    renderCart(); // Update the cart display
+                    showToast('Checkout successful! (Simulated)', 'success');
+                } else {
+                    showToast('Your cart is empty!', 'warning');
+                }
+            });
+    
+            // Initial rendering
+            renderProductList();
+            renderCart();
+        </script>
+    </body>
+    </html>
+     
+</body>
+</html>
